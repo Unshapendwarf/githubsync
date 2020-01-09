@@ -1,0 +1,26 @@
+{
+  "dryRun": true,
+  "manifests": [
+    "string"
+  ],
+  "name": "string",
+  "prune": true,
+  "resources": [
+    {
+      "group": "string",
+      "kind": "string",
+      "name": "string"
+    }
+  ],
+  "revision": "string",
+  "strategy": {
+    "apply": {
+      "force": true
+    },
+    "hook": {
+      "syncStrategyApply": {
+        "force": true
+      }
+    }
+  }
+}

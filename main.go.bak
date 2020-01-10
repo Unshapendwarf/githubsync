@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	""
+	"github.com/unshapendwarf/githubsync/cicd"
+
 )
 
 func main() {

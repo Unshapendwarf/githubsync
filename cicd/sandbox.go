@@ -1,4 +1,4 @@
-package main
+package cicd
 
 import (
 	"bytes"
@@ -10,31 +10,16 @@ import (
 	"net/http"
 )
 
-type argoCDinfo struct {
+type ArgoCDinfo struct {
 	username string
 	password string
 	iport string
 	token string
 }
 
-func filetest() {
-	//파일 읽기
-	bytes, err := ioutil.ReadFile("/Users/mf839-027/Documents/hong/README.md")
-	if err != nil {
-		panic(err)
-	}
 
-	//파일 내용 출력, bytes to string
-	//fmt.Print(string(bytes))
-
-	err = ioutil.WriteFile("/Users/mf839-027/Documents/appsync/githubsync/cicd/TEST2.md", bytes, 0)
-	if err != nil {
-		panic(err)
-	}
-}
-
-//*********************** syncapp ************************
-func syncapp(cluster argoCDinfo, app string){
+//*********************** SyncApp ************************
+func SyncApp(cluster *ArgoCDinfo, app string){
 	url:=fmt.Sprintf("http://%s/api/v1/applications/%s/sync", cluster.iport, app)
 	fmt.Println(url)
 
@@ -84,7 +69,7 @@ func syncapp(cluster argoCDinfo, app string){
 }
 //********************************************************
 
-func gettoken(cluster *argoCDinfo) {
+func GetToken(cluster *ArgoCDinfo) {
 	//인증서 없이 접근
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -121,8 +106,8 @@ func gettoken(cluster *argoCDinfo) {
 	fmt.Printf("this is cluster.token value -> %s\n", cluster.token)
 }
 
-//getapps; get all applications in argoCD cluster
-func getapps( cluster argoCDinfo ){
+//GetApps; get all applications in argoCD cluster
+func GetApps( cluster *ArgoCDinfo){
 	//appname := "appsync"
 	url:=fmt.Sprintf("http://%s/api/v1/applications", cluster.iport) //API calling for get application list, not completed
 
@@ -167,28 +152,31 @@ func getapps( cluster argoCDinfo ){
 	//fmt.Println(strresp)
 }
 
-// argoCDAPIchecker; sync, create, delete 중 어떤 것인지 확인하고 해당하는 api call을 실행한다. 지금은 일단 sync만 해본다.
-func argoCDAPIchecker( checker string , cluster argoCDinfo ) {
+// CheckAPI; sync, create, delete 중 어떤 것인지 확인하고 해당하는 api call을 실행한다. 지금은 일단 sync만 해본다.
+func CheckAPI( checker string , cluster *ArgoCDinfo) {
 	if checker == "apps" {
-		fmt.Println("argoCDAPIchecker == getapps")
-		getapps(cluster)
+		fmt.Println("CheckAPI == GetApps")
+		GetApps(cluster)
 	} else if checker == "sync"{
-		fmt.Println("argoCDAPIchecker == sync")
-		syncapp(cluster, "appsync")
+		fmt.Println("CheckAPI == sync")
+		SyncApp(cluster, "appsync")
+	} else if checker == "token"{
+		fmt.Println("CheckAPI == token")
+		GetToken(cluster)
+	} else {
+		fmt.Println("Invalid API")
 	}
 }
 
 func main() {
 	// 0. set variable
-	filetest()
-
-	var cluster argoCDinfo
+	var cluster ArgoCDinfo
 
 	// 1. argocd cluster,
 	cluster.iport = "192.168.48.12:31410" //argocd cluster
 	cluster.username = "admin"
 	cluster.password = "1222"
 	//cluster.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NzgyOTEyOTEsImlzcyI6ImFyZ29jZCIsIm5iZiI6MTU3ODI5MTI5MSwic3ViIjoiYWRtaW4ifQ.O_WQAZ5R6Jdca3uZji6LVrmYY461feHGwRmhvDo0uUI"
-	gettoken(&cluster)
-	argoCDAPIchecker("getapps", cluster)
+	CheckAPI("token", &cluster)
+	CheckAPI("apps", &cluster)
 }

@@ -1,4 +1,4 @@
-package cicd
+package githubsync
 
 import (
 	"bytes"
@@ -141,15 +141,19 @@ func GetApps( cluster *ArgoCDinfo){
 		return
 	}
 
+	if yamlbytes == nil {
+		panic("yamlbytes is empty")
+	}
 	//file write
-	err = ioutil.WriteFile("/Users/mf839-027/Documents/appsync/githubsync/cicd/response.yaml", yamlbytes, 0)
+	/*
+	err = ioutil.WriteFile("./response/response.yaml", yamlbytes, 0)
 	if err != nil {
 		panic(err)
 	}
-
-	//fmt.Println(string(y))
-	//strresp := string(bytes) //바이트를 문자열로
-	//fmt.Println(strresp)
+	fmt.Println(string(y))
+	strresp := string(bytes) //바이트를 문자열로
+	fmt.Println(strresp)
+	 */
 }
 
 // CheckAPI; sync, create, delete 중 어떤 것인지 확인하고 해당하는 api call을 실행한다. 지금은 일단 sync만 해본다.
@@ -160,23 +164,10 @@ func CheckAPI( checker string , cluster *ArgoCDinfo) {
 	} else if checker == "sync"{
 		fmt.Println("CheckAPI == sync")
 		SyncApp(cluster, "appsync")
-	} else if checker == "token"{
+	} else if checker == "gettoken"{
 		fmt.Println("CheckAPI == token")
 		GetToken(cluster)
 	} else {
 		fmt.Println("Invalid API")
 	}
-}
-
-func main() {
-	// 0. set variable
-	var cluster ArgoCDinfo
-
-	// 1. argocd cluster,
-	cluster.iport = "192.168.48.12:31410" //argocd cluster
-	cluster.username = "admin"
-	cluster.password = "1222"
-	//cluster.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NzgyOTEyOTEsImlzcyI6ImFyZ29jZCIsIm5iZiI6MTU3ODI5MTI5MSwic3ViIjoiYWRtaW4ifQ.O_WQAZ5R6Jdca3uZji6LVrmYY461feHGwRmhvDo0uUI"
-	CheckAPI("token", &cluster)
-	CheckAPI("apps", &cluster)
 }

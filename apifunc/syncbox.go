@@ -1,4 +1,4 @@
-package cicd
+package apifunc
 
 import (
 

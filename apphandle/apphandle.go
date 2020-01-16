@@ -1,23 +1,22 @@
 package apifunc
 
 import (
-
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"github.com/ghodss/yaml"
-	//"github.com/unshapendwarf/githubsync/cicd/sandbox"
+	"githubsync"
+	"go/types"
 	"io/ioutil"
 	"net/http"
 )
 
 
 //*********************** SyncApp ************************
-func SSyncApp(cluster *AgoCDinfo, app string){
-	url:=fmt.Sprintf("http://%s/api/v1/applications/%s/sync", cluster.iport, app)
+func SyncApp(cluster *githubsync.ArgoCDinfo , app string){
+	url:=fmt.Sprintf("http://%s/api/v1/applications/%s/sync", cluster.IPport, app)
 	fmt.Println(url)
-
 	//json data body
 
 	jsonData := map[string]string{"name":"<REPONAME>","scmID":"git","forkable":"true"} //this data should be written with another config
@@ -29,7 +28,7 @@ func SSyncApp(cluster *AgoCDinfo, app string){
 	}
 
 	//request header setting; authorization is required(to get in argocd cluster)
-	req.Header.Set("Authorization", "Bearer " +cluster.token)
+	req.Header.Set("Authorization", "Bearer " +cluster.Token)
 	req.SetBasicAuth("<USERNAME>", "<PASSWORD>")
 
 	//client gen; insecure connection(without certification)
@@ -60,5 +59,16 @@ func SSyncApp(cluster *AgoCDinfo, app string){
 	if err != nil {
 		panic(err)
 	}
+}
 
+func Create(cluster *githubsync.ArgoCDinfo){
+	if cluster.Token == "" {
+		panic("Invalid token for Create!!")
+	}
+}
+
+func Delete(cluster *githubsync.ArgoCDinfo){
+	if cluster.Token == "" {
+		panic("Invalid token for Delete!!")
+	}
 }

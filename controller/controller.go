@@ -11,16 +11,16 @@ import (
 )
 
 type ArgoCDinfo struct {
-	username string
-	password string
-	iport string
-	token string
+	Username string
+	Password string
+	IPport   string
+	Token    string
 }
 
 
 //*********************** SyncApp ************************
-func SyncApp(cluster *ArgoCDinfo, app string){
-	url:=fmt.Sprintf("http://%s/api/v1/applications/%s/sync", cluster.iport, app)
+func SampleSyncApp(cluster *ArgoCDinfo, app string){
+	url:=fmt.Sprintf("http://%s/api/v1/applications/%s/sync", cluster.IPport, app)
 	fmt.Println(url)
 
 	//json data body
@@ -34,7 +34,7 @@ func SyncApp(cluster *ArgoCDinfo, app string){
 	}
 
 	//request header setting; authorization is required(to get in argocd cluster)
-	req.Header.Set("Authorization", "Bearer " +cluster.token)
+	req.Header.Set("Authorization", "Bearer " +cluster.Token)
 	req.SetBasicAuth("<USERNAME>", "<PASSWORD>")
 
 	//client gen; insecure connection(without certification)
@@ -76,13 +76,13 @@ func GetToken(cluster *ArgoCDinfo) {
 	}
 	client := &http.Client{Transport: tr}
 
-	//accountmap default id/pw setting: admin/password
-	accountmap := map[string] string{"username" : cluster.username, "password" : cluster.password}
-	tokenmap := map[string]string{"token":"None"}
+	//accountmap default id/pw setting: admin/Password
+	accountmap := map[string] string{"Username" : cluster.Username, "Password" : cluster.Password}
+	tokenmap := map[string]string{"Token":"None"}
 
 	bodyjson, _ :=json.Marshal(accountmap)
 
-	url:=fmt.Sprintf("http://%s/api/v1/session", cluster.iport)
+	url:=fmt.Sprintf("http://%s/api/v1/session", cluster.IPport)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(bodyjson))
 	if err != nil {
 		panic(err)
@@ -102,14 +102,14 @@ func GetToken(cluster *ArgoCDinfo) {
 		panic(err)
 	}
 
-	cluster.token = tokenmap["token"]
-	fmt.Printf("this is cluster.token value -> %s\n", cluster.token)
+	cluster.Token = tokenmap["Token"]
+	fmt.Printf("this is cluster.Token value -> %s\n", cluster.Token)
 }
 
 //GetApps; get all applications in argoCD cluster
 func GetApps( cluster *ArgoCDinfo){
 	//appname := "appsync"
-	url:=fmt.Sprintf("http://%s/api/v1/applications", cluster.iport) //API calling for get application list, not completed
+	url:=fmt.Sprintf("http://%s/api/v1/applications", cluster.IPport) //API calling for get application list, not completed
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -123,7 +123,7 @@ func GetApps( cluster *ArgoCDinfo){
 	}
 
 	//request header setting; authorization is required(to get in argocd cluster)
-	req.Header.Set("Authorization", "Bearer " +cluster.token)
+	req.Header.Set("Authorization", "Bearer " +cluster.Token)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -158,6 +158,7 @@ func GetApps( cluster *ArgoCDinfo){
 
 // CheckAPI; sync, create, delete 중 어떤 것인지 확인하고 해당하는 api call을 실행한다. 지금은 일단 sync만 해본다.
 func CheckAPI( checker string , cluster *ArgoCDinfo) {
+	//getapps, gettoken 등 sync, create, delete 외의 함수는 여기에서 다루지 않는다. 지금은 임시로 작
 	if checker == "apps" {
 		fmt.Println("CheckAPI == GetApps")
 		GetApps(cluster)
@@ -165,7 +166,7 @@ func CheckAPI( checker string , cluster *ArgoCDinfo) {
 		fmt.Println("CheckAPI == sync")
 		SyncApp(cluster, "appsync")
 	} else if checker == "gettoken"{
-		fmt.Println("CheckAPI == token")
+		fmt.Println("CheckAPI == Token")
 		GetToken(cluster)
 	} else {
 		fmt.Println("Invalid API")

@@ -1,4 +1,4 @@
-module github.com/unshapendwarf/githubsync
+module githubsync
 
 go 1.13
 

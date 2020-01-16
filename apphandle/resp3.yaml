@@ -1,0 +1,120 @@
+metadata:
+  creationTimestamp: "2020-01-08T23:49:39Z"
+  generation: 2091
+  name: appsync
+  namespace: argocd
+  resourceVersion: "8593090"
+  selfLink: /apis/argoproj.io/v1alpha1/namespaces/argocd/applications/appsync
+  uid: 8887f59d-3271-11ea-9728-001e67d33597
+operation:
+  sync:
+    revision: 8f159a2a6da4c6c0e9e2274bd4779d0c684f0c47
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: manifests
+    repoURL: https://github.com/Unshapendwarf/project1.git
+    targetRevision: HEAD
+status:
+  health:
+    status: Healthy
+  history:
+  - deployedAt: "2020-01-08T23:50:08Z"
+    id: 0
+    revision: 8f159a2a6da4c6c0e9e2274bd4779d0c684f0c47
+    source:
+      path: manifests
+      repoURL: https://github.com/Unshapendwarf/project1.git
+      targetRevision: HEAD
+  - deployedAt: "2020-01-13T02:07:34Z"
+    id: 1
+    revision: 8f159a2a6da4c6c0e9e2274bd4779d0c684f0c47
+    source:
+      path: manifests
+      repoURL: https://github.com/Unshapendwarf/project1.git
+      targetRevision: HEAD
+  - deployedAt: "2020-01-13T05:04:16Z"
+    id: 2
+    revision: 8f159a2a6da4c6c0e9e2274bd4779d0c684f0c47
+    source:
+      path: manifests
+      repoURL: https://github.com/Unshapendwarf/project1.git
+      targetRevision: HEAD
+  - deployedAt: "2020-01-13T05:15:36Z"
+    id: 3
+    revision: 8f159a2a6da4c6c0e9e2274bd4779d0c684f0c47
+    source:
+      path: manifests
+      repoURL: https://github.com/Unshapendwarf/project1.git
+      targetRevision: HEAD
+  - deployedAt: "2020-01-13T05:16:22Z"
+    id: 4
+    revision: 8f159a2a6da4c6c0e9e2274bd4779d0c684f0c47
+    source:
+      path: manifests
+      repoURL: https://github.com/Unshapendwarf/project1.git
+      targetRevision: HEAD
+  - deployedAt: "2020-01-13T05:17:37Z"
+    id: 5
+    revision: 8f159a2a6da4c6c0e9e2274bd4779d0c684f0c47
+    source:
+      path: manifests
+      repoURL: https://github.com/Unshapendwarf/project1.git
+      targetRevision: HEAD
+  - deployedAt: "2020-01-13T05:20:09Z"
+    id: 6
+    revision: 8f159a2a6da4c6c0e9e2274bd4779d0c684f0c47
+    source:
+      path: manifests
+      repoURL: https://github.com/Unshapendwarf/project1.git
+      targetRevision: HEAD
+  - deployedAt: "2020-01-13T05:20:56Z"
+    id: 7
+    revision: 8f159a2a6da4c6c0e9e2274bd4779d0c684f0c47
+    source:
+      path: manifests
+      repoURL: https://github.com/Unshapendwarf/project1.git
+      targetRevision: HEAD
+  - deployedAt: "2020-01-13T05:26:49Z"
+    id: 8
+    revision: 8f159a2a6da4c6c0e9e2274bd4779d0c684f0c47
+    source:
+      path: manifests
+      repoURL: https://github.com/Unshapendwarf/project1.git
+      targetRevision: HEAD
+  observedAt: "2020-01-13T05:26:49Z"
+  reconciledAt: "2020-01-13T05:26:49Z"
+  resources:
+  - group: apps
+    health:
+      status: Healthy
+    kind: Deployment
+    name: super-deploy
+    namespace: default
+    status: Synced
+    version: v1
+  - health:
+      status: Healthy
+    kind: Service
+    name: super-svc
+    namespace: default
+    status: Synced
+    version: v1
+  sourceType: Directory
+  summary:
+    images:
+    - unshapendwarf/sample:v2
+  sync:
+    comparedTo:
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      source:
+        path: manifests
+        repoURL: https://github.com/Unshapendwarf/project1.git
+        targetRevision: HEAD
+    revision: 8f159a2a6da4c6c0e9e2274bd4779d0c684f0c47
+    status: Synced

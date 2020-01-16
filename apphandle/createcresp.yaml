@@ -1,0 +1,26 @@
+metadata:
+  creationTimestamp: "2020-01-13T06:21:36Z"
+  generation: 1
+  name: appsync2
+  namespace: argocd
+  resourceVersion: "8601327"
+  selfLink: /apis/argoproj.io/v1alpha1/namespaces/argocd/applications/appsync2
+  uid: f3bcb281-35cc-11ea-9728-001e67d33597
+spec:
+  destination:
+    namespace: dafault
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: manifests
+    repoURL: https://github.com/Unshapendwarf/project1.git
+    targetRevision: HEAD
+status:
+  health: {}
+  summary: {}
+  sync:
+    comparedTo:
+      destination: {}
+      source:
+        repoURL: ""
+    status: ""

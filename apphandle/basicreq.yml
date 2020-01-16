@@ -1,0 +1,12 @@
+metadata:
+  name: appsync2
+spec:
+  destination:
+    namespace: dafault
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: manifests
+    repoURL: 'https://github.com/Unshapendwarf/project1.git'
+    targetRevision: HEAD
+  project: default
+  syncPolicy: null

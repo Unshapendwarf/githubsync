@@ -1,0 +1,53 @@
+#this is curl part of workflow
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: appcd-curl-
+spec:
+  # invoke the whalesay template with
+  # "hello world" as the argument
+  # to the message parameter
+  entrypoint: curlargocd
+  arguments:
+    parameters:
+    - name: token
+      value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NzgyOTEyOTEsImlzcyI6ImFyZ29jZCIsIm5iZiI6MTU3ODI5MTI5MSwic3ViIjoiYWRtaW4ifQ.O_WQAZ5R6Jdca3uZji6LVrmYY461feHGwRmhvDo0uUI"
+
+  templates:
+  - name: curlargocd
+    steps:
+    - - name: curl-create
+        template: curl
+        arguments:
+          artifacts:
+          - name: method
+            value: "POST"
+
+    - - name: curl-validation
+        template: curl
+        arguments:
+          artifacts:
+          - name: method
+            value: "GET"
+          - name: url
+            value: "192.168.48.12:31410"
+          - body
+
+  - name: curl
+    inputs:
+      artifacts:
+      - name: method
+      - name: url
+      - name: body
+        value: 
+      - name: token    # parameter declaration
+    container:
+      # run cowsay with that message input parameter as args
+      image: curlimages/curl
+      #command: [cowsay]
+      command: [sh, -c]
+      args: ["curl -X {{inputs.artifacts.method}} https://{{inputs.artifacts.url}} -H "Authorization: Bearer {{inputs.artifacts.token}}" -d {{inputs.artifacts.body}} -k -L"]
+      #args: ["{{inputs.parameters.message}}"]
+
+  #- name: curlupdate
+  #일단 여기 탬플릿에 뭐가 들어갈지는 나중에...

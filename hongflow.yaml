@@ -18,36 +18,58 @@ spec:
     steps:
     - - name: curl-create
         template: curl
-        arguments:
-          artifacts:
+          parameters:
           - name: method
             value: "POST"
+          - name: url
+            value: "192.168.48.12:31410/api/v1/applications"
+          - name: body
+            value: "{"metadata": {
+    "name": "appsync3"
+  },
+  "spec": {
+    "destination": {
+      "namespace": "dafault",
+      "server": "https://kubernetes.default.svc"
+    },
+    "source": {
+      "path": "manifests",
+      "repoURL": "https://github.com/Unshapendwarf/project1.git",
+      "targetRevision": "HEAD"
+    },
+    "project": "default",
+    "syncPolicy": null
+  }
+}"
 
     - - name: curl-validation
-        template: curl
+        template: createvalidation
         arguments:
-          artifacts:
-          - name: method
-            value: "GET"
-          - name: url
-            value: "192.168.48.12:31410"
-          - body
+          parameters:
+          - name: response
+            from: "{{steps.curl-create.outputs.result}}"
 
   - name: curl
     inputs:
-      artifacts:
+      parameters:
       - name: method
       - name: url
-      - name: body
-        value: 
-      - name: token    # parameter declaration
+      - name: token
+      - name: body    # parameter declaration
     container:
       # run cowsay with that message input parameter as args
       image: curlimages/curl
-      #command: [cowsay]
       command: [sh, -c]
-      args: ["curl -X {{inputs.artifacts.method}} https://{{inputs.artifacts.url}} -H "Authorization: Bearer {{inputs.artifacts.token}}" -d {{inputs.artifacts.body}} -k -L"]
+      args: ["curl -X {{inputs.parameters.method}} https://{{inputs.parameters.url}} -H "Authorization: Bearer {{inputs.parameters.token}}" -d {{inputs.parameters.body}} -k -L"]
       #args: ["{{inputs.parameters.message}}"]
 
+  - name: createvalidation
+    inputs:
+      parameters:
+      - name: response
+      container:
+        image: alpine:latest
+        command: [sh, -c]
+        args: ["echo result was: {{inputs.parameters.response}}"]
   #- name: curlupdate
   #일단 여기 탬플릿에 뭐가 들어갈지는 나중에...

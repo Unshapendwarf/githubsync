@@ -16,38 +16,45 @@ spec:
   templates:
   - name: curlargocd
     steps:
+    - - name: jsondump
+        template: jsontemp
+
     - - name: curl-create
         template: curl
+        arguments:
           parameters:
           - name: method
             value: "POST"
+          - name: token
+            value: "{{workflow.parameters.token}}"
           - name: url
             value: "192.168.48.12:31410/api/v1/applications"
+          artifacts:
           - name: body
-            value: "{"metadata": {
-    "name": "appsync3"
-  },
-  "spec": {
-    "destination": {
-      "namespace": "dafault",
-      "server": "https://kubernetes.default.svc"
-    },
-    "source": {
-      "path": "manifests",
-      "repoURL": "https://github.com/Unshapendwarf/project1.git",
-      "targetRevision": "HEAD"
-    },
-    "project": "default",
-    "syncPolicy": null
-  }
-}"
+            from: "{{steps.jsondump.outputs.artifacts.jsonout}}"
 
     - - name: curl-validation
         template: createvalidation
         arguments:
           parameters:
           - name: response
-            from: "{{steps.curl-create.outputs.result}}"
+            value: "{{steps.curl-create.outputs.result}}"
+
+  - name: jsontemp
+    script:
+      image: python:alpine3.6
+      command: [python]
+      source: |
+        import json
+        import sys
+        bodydata ={ "metadata": {"name": "appsync3"}, "spec": {"destination": {"namespace": "default","server": "https://kubernetes.default.svc"},"source": {"path": "manifests", "repoURL": "https://github.com/Unshapendwarf/project1.git", "targetRevision": "HEAD" }, "project": "default" , "syncPolicy": {"automated":{}}}}
+        with open('/tmp/data1st', 'w') as outfile:
+          json.dump(bodydata, outfile)
+    outputs:
+      artifacts:
+      - name: jsonout
+        path: /tmp/data1st
+
 
   - name: curl
     inputs:
@@ -55,21 +62,24 @@ spec:
       - name: method
       - name: url
       - name: token
-      - name: body    # parameter declaration
-    container:
-      # run cowsay with that message input parameter as args
-      image: curlimages/curl
-      command: [sh, -c]
-      args: ["curl -X {{inputs.parameters.method}} https://{{inputs.parameters.url}} -H "Authorization: Bearer {{inputs.parameters.token}}" -d {{inputs.parameters.body}} -k -L"]
-      #args: ["{{inputs.parameters.message}}"]
+      artifacts:
+      - name: body
+        path: /tmp/bodyjson
+    script:
+      image: tutum/curl
+      command: [bash]
+      source: |
+        curl -sL -X "{{inputs.parameters.method}}" "https://{{inputs.parameters.url}}" -H "Authorization: Bearer {{inputs.parameters.token}}" -d @/tmp/bodyjson -k
 
   - name: createvalidation
     inputs:
       parameters:
       - name: response
-      container:
-        image: alpine:latest
-        command: [sh, -c]
-        args: ["echo result was: {{inputs.parameters.response}}"]
-  #- name: curlupdate
-  #일단 여기 탬플릿에 뭐가 들어갈지는 나중에...
+    script:
+      image: python:alpine3.6
+      command: [python]
+      source: |
+        import json
+        import sys
+        a = "a"
+        print(a)

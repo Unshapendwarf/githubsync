@@ -1,0 +1,66 @@
+#this is curl part of workflow
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: appcd-curl-
+spec:
+  # invoke the whalesay template with
+  # "hello world" as the argument
+  # to the message parameter
+  entrypoint: curlargocd
+  arguments:
+    parameters:
+    - name: token
+      value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NzgyOTEyOTEsImlzcyI6ImFyZ29jZCIsIm5iZiI6MTU3ODI5MTI5MSwic3ViIjoiYWRtaW4ifQ.O_WQAZ5R6Jdca3uZji6LVrmYY461feHGwRmhvDo0uUI"
+
+  templates:
+  - name: curlargocd
+    steps:
+    - - name: curl-create
+        template: curl
+        arguments:
+          parameters:
+          - name: method
+            value: "POST"
+          - name: token
+            value: "{{workflow.parameters.token}}"
+          - name: url
+            value: "192.168.48.12:31410/api/v1/applications"
+          artifacts:
+          - name: body
+            from: "{{steps.--you-can-edit-here}}"
+
+    - - name: curl-validation
+        template: createvalidation
+        arguments:
+          parameters:
+          - name: response
+            value: "{{steps.curl-create.outputs.result}}"
+
+  - name: curl
+    inputs:
+      parameters:
+      - name: method
+      - name: url
+      - name: token
+      artifacts:
+      - name: body
+        path: /tmp/bodyjson
+    script:
+      image: tutum/curl
+      command: [bash]
+      source: |
+        curl -sL -X "{{inputs.parameters.method}}" "https://{{inputs.parameters.url}}" -H "Authorization: Bearer {{inputs.parameters.token}}" -d @/tmp/bodyjson -k
+
+  - name: createvalidation
+    inputs:
+      parameters:
+      - name: response
+    script:
+      image: python:alpine3.6
+      command: [python]
+      source: |
+        import json
+        import sys
+        a = "still editting"
+        print(a)

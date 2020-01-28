@@ -10,9 +10,12 @@ spec:
   entrypoint: curlargocd
   arguments:
     parameters:
-    - name: token
-      value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NzgyOTEyOTEsImlzcyI6ImFyZ29jZCIsIm5iZiI6MTU3ODI5MTI5MSwic3ViIjoiYWRtaW4ifQ.O_WQAZ5R6Jdca3uZji6LVrmYY461feHGwRmhvDo0uUI"
-
+      - name: argocdid
+        value: admin
+      - name: argocdpw
+        value: 1222
+      - name: clusterIPport
+        value: "192.168.48.12:31410"
   templates:
   - name: curlargocd
     steps:

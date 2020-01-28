@@ -11,7 +11,7 @@ spec:
       - name: argoid
         value: admin
       - name: argopassword
-        value: qwe123
+        value: "1222"
       - name: token
         value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NzgyOTEyOTEsImlzcyI6ImFyZ29jZCIsIm5iZiI6MTU3ODI5MTI5MSwic3ViIjoiYWRtaW4ifQ.O_WQAZ5R6Jdca3uZji6LVrmYY461feHGwRmhvDo0uUI"
   templates:
@@ -45,7 +45,7 @@ spec:
         image: rbxorkt12/appcd:1.0
         command: [sh, -c]
         args: ["
-        ./appcd argoinfo {{input.parameters.argocdid}} {{input.parameters.argocdpassword}} > /argoinfo;
+        ./appcd argoinfo {{inputs.parameters.argocdid}} {{inputs.parameters.argocdpassword}} > /argoinfo;
         cat /argoinfo;
         "]
       outputs:
@@ -87,19 +87,19 @@ spec:
           template: lint
           arguments:
             artifacts:
-            - name: configbyte_lint
+            - name: configbyte-lint
               from: "{{inputs.artifacts.configbyte}}"
             parameters:
-            - name: flag_lint
+            - name: flag-lint
               value: "{{inputs.parameters.flag}}"
       - - name: convert
           template: convert
           arguments:
             artifacts:
-            - name: configbyte_convert
+            - name: configbyte-convert
               from: "{{inputs.artifacts.configbyte}}"
             parameters:
-            - name: flag_convert
+            - name: flag-convert
               value: "{{inputs.parameters.flag}}"
       - - name: splitapplication
           template: findappname
@@ -122,15 +122,15 @@ spec:
     - name: lint
       inputs:
         parameters:
-        - name: flag_lint
+        - name: flag-lint
         artifacts:
-        - name: configbyte_lint
+        - name: configbyte-lint
           path: /tmp
       script:
         image: rbxorkt12/appcd:1.0
         command: [bash]
         source: |
-          if [ "auto" == "{{inputs.parameters.flag_lint}}" ];then
+          if [ "auto" == "{{inputs.parameters.flag-lint}}" ];then
             ./appcd lint</tmp/Autoconfig.yaml;
           else
             ./appcd lint</tmp/Manualconfig.yaml;
@@ -139,15 +139,15 @@ spec:
     - name: convert
       inputs:
         artifacts:
-          - name: configbyte_convert
+          - name: configbyte-convert
             path: /tmp
         parameters:
-          - name: flag_convert
+          - name: flag-convert
       script:
         image: rbxorkt12/appcd:1.0
         command: [bash]
         source: |
-          if [ "auto" == "{{inputs.parameters.flag_convert}}" ];then
+          if [ "auto" == "{{inputs.parameters.flag-convert}}" ];then
             ./appcd convert auto</tmp/Autoconfig.yaml> /convertbyte.txt;
           else
             ./appcd convert manual</tmp/Manualconfig.yaml> /convertbyte.txt;
